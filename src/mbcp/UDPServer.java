@@ -7,17 +7,15 @@ package mbcp;
 
 /**
  *
- * @author Samuel
+ * @author ark
  */
-public class MBCP {
+public class UDPServer {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        // comentario de prueba para repasar comandos de git
-        System.out.println("Hola mundo!!");
     }
     
 }
