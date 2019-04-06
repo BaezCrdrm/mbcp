@@ -6,50 +6,64 @@
 package Model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author ark
  */
-public class Mensaje implements Serializable
+public class Mensaje extends Tupla implements Serializable
 {
-    private int numero;
-    private String cad;
-    private int vector;
+    private String cadena;
+    private List<Tupla> historial;
 
-    public Mensaje(int numero, String cad, int vector) {
-        this.numero = numero;
-        this.cad = cad;
-        this.vector = vector;
+    public Mensaje(int proceso, int numero, String cadena) {
+        super(proceso, numero);
+        initialize(cadena);
     }
 
-    public int getNumero() {
-        return numero;
+    public Mensaje(Tupla tupla, String cadena) {
+        super(tupla);
+        initialize(cadena);
     }
 
-    public void setNumero(int numero) {
-        this.numero = numero;
+    private void initialize(String cadena)
+    {
+        this.cadena = cadena;
+        historial = new ArrayList<Tupla>();
     }
 
-    public String getCad() {
-        return cad;
+    public String getCadena() {
+        return cadena;
     }
 
-    public void setCad(String cad) {
-        this.cad = cad;
+    public void setCadena(String cadena) {
+        this.cadena = cadena;
     }
 
-    public int getVector() {
-        return vector;
+    public Tupla getTupla() { return (Tupla)this; }
+
+    /**
+     * @return the historial
+     */
+    public List<Tupla> getHistorial() {
+        return historial;
     }
 
-    public void setVector(int vector) {
-        this.vector = vector;
+    /**
+     * Enviar mensaje previamente construido
+     */
+    public void enviar(Proceso emisor, Proceso receptor)
+    {
+        this.historial = emisor.getCI();
+
+        // TODO: Envío de mensaje por UDP.
     }
 
     @Override
     public String toString() {
-        return "Mensaje{" + "numero=" + numero + ", cad=" + cad + ", vector=" + vector + '}';
+        return "Mensaje{" + "numero=" + this.getMensaje() + ", cadena=" + cadena + ", vector=" + this.getProceso() + '}';
     }
     
 }

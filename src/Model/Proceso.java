@@ -8,10 +8,11 @@ import java.util.List;
  */
 public class Proceso
 {
-    String address, puerto, id;
-    List<Mensaje> buffer, recibidos;
-    List<Tupla> ci;
-    int[] vt;
+    private String address, puerto;
+    private int id;
+    private List<Mensaje> buffer, recibidos;
+    private List<Tupla> ci;
+    private int[] vt;
 
     /**
      * Crea la definición de un proceso
@@ -19,7 +20,7 @@ public class Proceso
      * @param puerto Puerto del equipo que ejecutará el proceso
      * @param id Identificador del proceso
      */
-    public Proceso(String ip, String puerto, String id)
+    public Proceso(String ip, String puerto, int id)
     {
         this.address = ip;
         this.puerto = puerto;
@@ -69,30 +70,97 @@ public class Proceso
     /**
      * @return the id
      */
-    public String getId() {
+    public int getId() {
         return id;
     }
 
+    public List<Tupla> getCI() { return this.ci; }
+
     public boolean esIniciable()
     {
-        if(!((this.id == null || this.id.equals("")) &&
-            (this.address == null || this.address.equals("")) &&
+        if(!((this.address == null || this.address.equals("")) &&
             (this.puerto == null || this.puerto.equals(""))))
             return true;
         else return false;
     }
 
     /**
-     * 
-     * @param t
+     * Actualiza el reloj lógico del proceso.
+     * @param tupla Tupla que contiene los valores del mensaje
      */
-    public void actualizaVector(Tupla t)
+    public void actualizaVector(Tupla tupla)
     {
-        this.vt[t.proceso] = t.mensaje;
+        this.vt[tupla.getProceso()] = tupla.getMensaje();
     }
 
+    /**
+     * Actualiza el reloj lógico del proceso.
+     * @param proceso ID del proceso
+     * @param mensaje Número de mensaje
+     */
     public void actualizaVector(int proceso, int mensaje)
     {
         this.vt[proceso] = mensaje;
+    }
+
+    /**
+     * Actualiza el reloj lógico del proceso.
+     * @param proceso ID del proceso
+     * 
+     */
+    public void actualizaVector(int proceso)
+    {
+        this.vt[proceso] += 1;
+    }
+
+    public boolean comparaEnHistorial(List<Tupla> historial)
+    {
+        for (Tupla tupla : historial)
+        {
+            if(!(tupla.getMensaje() <= this.vt[tupla.getProceso()]))
+                return false;
+        }
+        return true;
+    }
+
+    public void delivery(Mensaje msg)
+    {
+        this.vt[id] += 1;
+        if(msg.coincideCon(this.ci))
+            poda();
+        else
+        {
+            ci.add((Tupla)msg);
+            poda(msg.getHistorial());
+        }
+    }
+
+    /**
+     * Remueve Tuplas de CI del proceso con base
+     * en el historial dado por el mensaje
+     */
+    private void poda()
+    {
+        this.ci.remove(
+            ci.stream().findAny().
+            filter(p -> p.getProceso() == this.id).
+            get());
+    }
+
+    /**
+     * Remueve Tuplas de CI del proceso con base
+     * en el historial dado por el mensaje
+     * @param historial
+     */
+    private void poda(List<Tupla> historial)
+    {
+        for (Tupla tci : this.ci)
+        {
+            for(Tupla his : historial)
+            {
+                if(tci.getProceso() == his.getProceso())
+                    this.ci.remove(tci);
+            }
+        }
     }
 }
