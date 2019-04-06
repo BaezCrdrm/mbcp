@@ -9,7 +9,7 @@ import java.util.List;
 public class Proceso
 {
     String address, port, id;
-    List<Object> buffer;
+    List<Mensaje> buffer, recibidos;
     List<Proceso> procesos;
     List<Tupla> ci;
     int[] vt;
@@ -17,21 +17,16 @@ public class Proceso
 
     public Proceso(String ip, String port, String id)
     {
-        initialize(ip);
+        this.address = ip;
         this.port = port;
         this.id = id;
     }
 
     public Proceso(List<Proceso> procesos, String ip)
     {
-        initialize(ip);
-        this.buffer = new ArrayList<Object>();
+        this.buffer = new ArrayList<Mensaje>();
         this.procesos = procesos;
         this.vt = new int[procesos.size()];
-    }
-
-    private void initialize(String ip)
-    {
         this.address = ip;
         this.ci = new ArrayList<Tupla>();
     }
