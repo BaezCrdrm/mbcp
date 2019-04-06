@@ -11,11 +11,11 @@ import java.io.Serializable;
  *
  * @author ark
  */
-public class Mensaje implements Serializable{
-    
+public class Mensaje implements Serializable
+{
     private int numero;
     private String cad;
-    private int  vector;
+    private int vector;
 
     public Mensaje(int numero, String cad, int vector) {
         this.numero = numero;
