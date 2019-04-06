@@ -15,6 +15,8 @@ import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import Model.Mensaje;
+
 /**
  *
  * @author ark
@@ -48,9 +50,9 @@ public class UDPServer {
                     //se obtiene el objeto del mensaje
                     mensaje = (Mensaje) is.readObject();
                     //se obytienen valores del mensaje
-                    int numero = mensaje.getNumero();
-                    String cadena = mensaje.getCad();
-                    int vector = mensaje.getVector();
+                    int numero = mensaje.getMensaje();
+                    String cadena = mensaje.getCadena();
+                    int vector = mensaje.getProceso();
                     //condicion de prueba para mostrar mensaje
                     if(vector==vectorProceso+1){
                         System.out.println("mensaje recibido: "+ numero+", "+cadena+", "+vector);

@@ -33,7 +33,7 @@ public class UDPCliente {
             String cad= "Hola";
             //modificacion para mandar objeto
             //se crea un nuevo mensaje
-            Mensaje me = new Mensaje(1,"Hola",1);
+            Mensaje me = new Mensaje(1, 1, "Hola");
             //vector para obtener los bytes de la clase
             byte[] incoming= new byte[1024];
             // se ocupa los 2 elementos para poder mandar la clase
