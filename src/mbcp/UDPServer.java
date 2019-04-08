@@ -16,6 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import Model.Mensaje;
+import Model.Tupla;
+import java.util.List;
 
 /**
  *
@@ -50,16 +52,13 @@ public class UDPServer {
                     //se obtiene el objeto del mensaje
                     mensaje = (Mensaje) is.readObject();
                     //se obytienen valores del mensaje
-                    int numero = mensaje.getMensaje();
-                    String cadena = mensaje.getCadena();
-                    int vector = mensaje.getProceso();
+//                    int procesoNumero = mensaje.getProceso();
+//                    int numeroMen = mensaje.getMensaje();
+//                    String cadena = mensaje.getCadena();
+//                    List<Tupla> historial = mensaje.getHistorial();
                     //condicion de prueba para mostrar mensaje
-                    if(vector==vectorProceso+1){
-                        System.out.println("mensaje recibido: "+ numero+", "+cadena+", "+vector);
-                        vectorProceso++;
-                    }else{
-                        System.out.println("mensaje almacenado");
-                    }
+                    
+                    System.out.println(mensaje.toString());
                     
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(UDPServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -78,8 +77,10 @@ public class UDPServer {
 //                aSocket.send(reply);
             }
             }catch(SocketException e){System.out.println("Socekt: "+e.getMessage());
-            }catch(IOException e){System.out.println("IO: "+e.getMessage());
+            } catch (IOException ex) {
+            Logger.getLogger(UDPServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
         }
     }
     
-}
+
