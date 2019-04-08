@@ -5,6 +5,13 @@
  */
 package mbcp;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import Model.Mensaje;
+import Model.Proceso;
+
 /**
  *
  * @author Samuel
@@ -14,10 +21,41 @@ public class MBCP {
     /**
      * @param args the command line arguments
      */
+    static List<Proceso> procesos;
+
     public static void main(String[] args) {
-        // TODO code application logic here
-        // comentario de prueba para repasar comandos de git
-        System.out.println("Hola mundo!!");
+        procesos = new ArrayList<Proceso>();
+        procesos.add(new Proceso("192.168.100.5", "101", 0));
+        procesos.add(new Proceso("192.168.100.5", "102", 1));
+
+        // while(true)
+        // {
+        // System.out.println("1. Ingresa nuevo proceso\n" +
+        // "2. Ejecuta");
+        // }
+
+        Ordenamiento o = new Ordenamiento(procesos);
+        Thread ordenamiento = new Thread(o);
+        ordenamiento.start();
+
+        Scanner lee = new Scanner(System.in);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        while(true)
+        {
+            System.out.println("1. Ingresa ID proceso");
+            int n = lee.nextInt();
+            List<Mensaje> msgs = o.getOrden(n);
+            
+            for(Mensaje m : msgs)
+            {
+                System.out.println(m.toString());
+            }
+        }
     }
     
 }

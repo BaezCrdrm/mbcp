@@ -43,6 +43,7 @@ public class Proceso implements Runnable
             this.puerto = proceso.getPuerto();
 
             this.buffer = new ArrayList<Mensaje>();
+            this.recibidos = new ArrayList<Mensaje>();
             this.vt = new int[n];
             this.ci = new ArrayList<Tupla>();
         } catch(NullPointerException npe)
@@ -75,6 +76,8 @@ public class Proceso implements Runnable
     }
 
     public List<Tupla> getCI() { return this.ci; }
+
+    public List<Mensaje> getOrden() { return this.recibidos; }
 
     public boolean esIniciable()
     {
@@ -135,8 +138,12 @@ public class Proceso implements Runnable
             poda();
         else
         {
-            ci.add((Tupla)msg);
+            this.ci.add(msg.getTupla());
             poda(msg.getHistorial());
+            this.recibidos.add(msg);
+
+            if(this.buffer.contains(msg))
+                this.buffer.remove(msg);
         }
     }
 
@@ -169,17 +176,40 @@ public class Proceso implements Runnable
         }
     }
 
+    /**
+     * Verifica si existen procesos en espera y 
+     * evalúa si es que pueden ser entregados
+     */
+    private void verificarMensajesEnEspera()
+    {
+        for(Mensaje msg : this.buffer)
+        {
+            ordenar(msg);
+        }
+    }
+
+    /**
+     * Método principal que permite el ordenamiento
+     * @param msg
+     */
+    private void ordenar(Mensaje msg) {
+        if (!(comparaSiguienteValor(msg.getMensaje()) && comparaEnHistorial(msg.getHistorial()))) {
+            // Wait
+            buffer.add(msg);
+        } else {
+            delivery(msg);
+
+            if(!this.buffer.isEmpty())
+                verificarMensajesEnEspera();
+        }
+    }
+
     @Override
     public void run()
     {
         // TODO: Poner en un ciclo
         Mensaje msg = new Mensaje(1,1,""); // Objeto provisional
 
-        if(comparaSiguienteValor(msg.getMensaje()) && comparaEnHistorial(msg.getHistorial()))
-            buffer.add(msg);
-        else
-        {
-            delivery(msg);
-        }
+        ordenar(msg);
     }
 }

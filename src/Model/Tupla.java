@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Tupla
@@ -32,9 +33,16 @@ public class Tupla {
 
     public boolean coincideCon(List<Tupla> ci)
     {
-        Tupla t = ci.stream().findAny().
-            filter(p -> p.getProceso() == this.getProceso()).
-            get();
+        Tupla t = null;
+        try
+        {
+            t = ci.stream().findAny().
+                filter(p -> p.getProceso() == this.getProceso()).
+                get();
+        } catch(NoSuchElementException nsee)
+        {
+            return false;
+        }
 
         return (t == null) ? false : true;
     }

@@ -42,7 +42,7 @@ public class Mensaje extends Tupla implements Serializable
         this.cadena = cadena;
     }
 
-    public Tupla getTupla() { return (Tupla)this; }
+    public Tupla getTupla() { return new Tupla(this); }
 
     /**
      * @return the historial
