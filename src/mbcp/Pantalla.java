@@ -5,11 +5,10 @@
  */
 package mbcp;
 
+import UDP.UDPCliente;
 import Model.Mensaje;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -323,12 +322,12 @@ public class Pantalla extends javax.swing.JFrame {
             //DatagramPacket request = new DatagramPacket(m,cad.length(),
             //        aHost,serverPort);
             aSocket.send(sendPacket);
+            aSocket.close();
         } catch (SocketException e) {
             System.out.println("Socket: " + e.getMessage());
         } catch (IOException ex) {
             Logger.getLogger(UDPCliente.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        }   
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

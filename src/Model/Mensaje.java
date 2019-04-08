@@ -51,14 +51,9 @@ public class Mensaje extends Tupla implements Serializable
         return historial;
     }
 
-    /**
-     * Enviar mensaje previamente construido
-     */
-    public void enviar(Proceso emisor, Proceso receptor)
+    public void setHistorial(List<Tupla> ci)
     {
-        this.historial = emisor.getCI();
-
-        // TODO: Envío de mensaje por UDP.
+        this.historial = ci;
     }
 
     @Override

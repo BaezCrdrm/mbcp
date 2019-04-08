@@ -3,6 +3,8 @@ package Model;
 import java.util.ArrayList;
 import java.util.List;
 
+import UDP.UDPCliente;
+
 /**
  * Proceso
  */
@@ -202,6 +204,25 @@ public class Proceso implements Runnable
             if(!this.buffer.isEmpty())
                 verificarMensajesEnEspera();
         }
+    }
+
+    /**
+     * Enviar un mensaje a un proceso dado
+     * @param msg Mensaje que se envía
+     * @param destinatario Proceso al que se le envía el mensaje
+     */
+    public void enviarMensaje(Mensaje msg, Proceso destinatario)
+    {
+        msg.setHistorial(destinatario.getCI());
+
+        try 
+        {
+            UDPCliente.enviarUDP(msg, destinatario);
+        } catch (Exception e) {
+            System.out.println("Ocurrió un error al intentar enviar el mensaje " + msg.toString());
+            System.out.print(e.getMessage() + "\n");
+        }
+        
     }
 
     @Override
