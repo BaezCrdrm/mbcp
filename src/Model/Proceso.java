@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Proceso
  */
-public class Proceso
+public class Proceso implements Runnable
 {
     private String address, puerto;
     private int id;
@@ -113,6 +113,11 @@ public class Proceso
         this.vt[proceso] += 1;
     }
 
+    public boolean comparaSiguienteValor(int msg)
+    {
+        return (msg == this.vt[id] + 1) ? true : false;
+    }
+
     public boolean comparaEnHistorial(List<Tupla> historial)
     {
         for (Tupla tupla : historial)
@@ -161,6 +166,20 @@ public class Proceso
                 if(tci.getProceso() == his.getProceso())
                     this.ci.remove(tci);
             }
+        }
+    }
+
+    @Override
+    public void run()
+    {
+        // TODO: Poner en un ciclo
+        Mensaje msg = new Mensaje(1,1,""); // Objeto provisional
+
+        if(comparaSiguienteValor(msg.getMensaje()) && comparaEnHistorial(msg.getHistorial()))
+            buffer.add(msg);
+        else
+        {
+            delivery(msg);
         }
     }
 }
