@@ -5,6 +5,8 @@
  */
 package UDP;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -23,6 +25,26 @@ import Model.Mensaje;
  */
 public class UDPServer implements Runnable
 {
+    private Mensaje recibido;
+    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
+
+    public UDPServer()
+    {
+
+    }
+
+    public Mensaje getRecibido() { return this.recibido; }
+
+    // public boolean isMessageChanged() { return this.changed; }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener)
+    {
+        this.changes.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        changes.removePropertyChangeListener(listener);
+    }
 
     @Override
     public void run()
@@ -33,7 +55,8 @@ public class UDPServer implements Runnable
             DatagramSocket aSocket = new DatagramSocket(6789);
             //vector del objeto entrante
             byte [] incoming = new byte[1024];
-            while(true){
+            while(true)
+            {
                 // se recibe el  datagrama del objeto
                 DatagramPacket incomingPackte = new DatagramPacket(incoming, incoming.length);
                 aSocket.receive(incomingPackte);
@@ -56,7 +79,10 @@ public class UDPServer implements Runnable
                     // Condicion de prueba para mostrar mensaje
                     
                     System.out.println(mensaje.toString());
-                    
+
+                    this.recibido = mensaje;
+                    // No modificar
+                    changes.firePropertyChange("CambiaMensaje", null, this.recibido);
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(UDPServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -80,5 +106,3 @@ public class UDPServer implements Runnable
         }
     }
 }
-    
-

@@ -11,6 +11,8 @@ import Model.Proceso;
 /**
  * Ordenamiento usando el algoritmo
  * Minimal Broadcast Causal Protocol
+ * 
+ * @author BaezCrdrm
  */
 public class Ordenamiento implements Runnable {
     private List<Proceso> procesos;
@@ -22,7 +24,9 @@ public class Ordenamiento implements Runnable {
         this.hilos = new HashMap<Integer, Thread>();
         for (Proceso proceso : procs) {
             if(proceso.esIniciable())
+            {
                 this.procesos.add(new Proceso(proceso, procs.size()));
+            }
         }
     }
 
@@ -33,10 +37,10 @@ public class Ordenamiento implements Runnable {
 
     @Override
     public void run() {
-        for(Proceso proceso : this.procesos)
-        {
-            this.hilos.put(proceso.getId(), new Thread(proceso));
-            this.hilos.get(proceso.getId()).start();
-        }
+        // for(Proceso proceso : this.procesos)
+        // {
+        //     this.hilos.put(proceso.getId(), new Thread(proceso));
+        //     this.hilos.get(proceso.getId()).start();
+        // }
     }
 }

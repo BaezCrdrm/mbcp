@@ -1,45 +1,49 @@
 package Model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import UDP.UDPCliente;
+import UDP.UDPServer;
 
 /**
  * Proceso
+ * 
+ * @author BaezCrdrm
  */
-public class Proceso implements Runnable
-{
+public class Proceso implements PropertyChangeListener {
     private String address, puerto;
     private int id;
     private List<Mensaje> buffer, recibidos;
     private List<Tupla> ci;
     private int[] vt;
+    private UDPServer udps;
+    private Thread server;
 
     /**
      * Crea la definición de un proceso
-     * @param ip Dirección IP del equipo que ejecutará el proceso
+     * 
+     * @param ip     Dirección IP del equipo que ejecutará el proceso
      * @param puerto Puerto del equipo que ejecutará el proceso
-     * @param id Identificador del proceso
+     * @param id     Identificador del proceso
      */
-    public Proceso(String ip, String puerto, int id)
-    {
+    public Proceso(String ip, String puerto, int id) {
         this.address = ip;
         this.puerto = puerto;
         this.id = id;
     }
 
     /**
-     * Crea un nuevo proceso que será utilizado en el
-     * algoritmo
-     * @param proceso Proceso de definición del cual se obtendrán
-     * los datos del proceso
-     * @param n Número de procesos. Creará el vector de tamaño 'n'
+     * Crea un nuevo proceso que será utilizado en el algoritmo
+     * 
+     * @param proceso Proceso de definición del cual se obtendrán los datos del
+     *                proceso
+     * @param n       Número de procesos. Creará el vector de tamaño 'n'
      */
-    public Proceso(Proceso proceso, int n)
-    {
-        try
-        {
+    public Proceso(Proceso proceso, int n) {
+        try {
             this.id = proceso.getId();
             this.address = proceso.getAddress();
             this.puerto = proceso.getPuerto();
@@ -48,8 +52,11 @@ public class Proceso implements Runnable
             this.recibidos = new ArrayList<Mensaje>();
             this.vt = new int[n];
             this.ci = new ArrayList<Tupla>();
-        } catch(NullPointerException npe)
-        {
+            this.udps = new UDPServer();
+            this.udps.addPropertyChangeListener(this);
+            this.server = new Thread(this.udps);
+            this.server.start();
+        } catch (NullPointerException npe) {
             System.out.println("Ocurró un error al crear el proceso");
             System.out.println("Agrega los valores correctos al parámetro");
             throw new NullPointerException();
@@ -77,121 +84,110 @@ public class Proceso implements Runnable
         return id;
     }
 
-    public List<Tupla> getCI() { return this.ci; }
+    public List<Tupla> getCI() {
+        return this.ci;
+    }
 
-    public List<Mensaje> getOrden() { return this.recibidos; }
+    public List<Mensaje> getOrden() {
+        return this.recibidos;
+    }
 
-    public boolean esIniciable()
-    {
-        if(!((this.address == null || this.address.equals("")) &&
-            (this.puerto == null || this.puerto.equals(""))))
+    public boolean esIniciable() {
+        if (!((this.address == null || this.address.equals("")) && (this.puerto == null || this.puerto.equals(""))))
             return true;
-        else return false;
+        else
+            return false;
     }
 
     /**
      * Actualiza el reloj lógico del proceso.
+     * 
      * @param tupla Tupla que contiene los valores del mensaje
      */
-    public void actualizaVector(Tupla tupla)
-    {
+    public void actualizaVector(Tupla tupla) {
         this.vt[tupla.getProceso()] = tupla.getMensaje();
     }
 
     /**
      * Actualiza el reloj lógico del proceso.
+     * 
      * @param proceso ID del proceso
      * @param mensaje Número de mensaje
      */
-    public void actualizaVector(int proceso, int mensaje)
-    {
+    public void actualizaVector(int proceso, int mensaje) {
         this.vt[proceso] = mensaje;
     }
 
     /**
      * Actualiza el reloj lógico del proceso.
+     * 
      * @param proceso ID del proceso
      * 
      */
-    public void actualizaVector(int proceso)
-    {
+    public void actualizaVector(int proceso) {
         this.vt[proceso] += 1;
     }
 
-    public boolean comparaSiguienteValor(int msg)
-    {
+    public boolean comparaSiguienteValor(int msg) {
         return (msg == this.vt[id] + 1) ? true : false;
     }
 
-    public boolean comparaEnHistorial(List<Tupla> historial)
-    {
-        for (Tupla tupla : historial)
-        {
-            if(!(tupla.getMensaje() <= this.vt[tupla.getProceso()]))
+    public boolean comparaEnHistorial(List<Tupla> historial) {
+        for (Tupla tupla : historial) {
+            if (!(tupla.getMensaje() <= this.vt[tupla.getProceso()]))
                 return false;
         }
         return true;
     }
 
-    public void delivery(Mensaje msg)
-    {
+    public void delivery(Mensaje msg) {
         this.vt[id] += 1;
-        if(msg.coincideCon(this.ci))
+        if (msg.coincideCon(this.ci))
             poda();
-        else
-        {
-            this.ci.add(msg.getTupla());
-            poda(msg.getHistorial());
-            this.recibidos.add(msg);
+     
+        this.ci.add(msg.getTupla());
+        poda(msg.getHistorial());
+        this.recibidos.add(msg);
 
-            if(this.buffer.contains(msg))
-                this.buffer.remove(msg);
-        }
+        if(this.buffer.contains(msg))
+            this.buffer.remove(msg);
+        
     }
 
     /**
-     * Remueve Tuplas de CI del proceso con base
-     * en el historial dado por el mensaje
+     * Remueve Tuplas de CI del proceso con base en el historial dado por el mensaje
      */
-    private void poda()
-    {
-        this.ci.remove(
-            ci.stream().findAny().
-            filter(p -> p.getProceso() == this.id).
-            get());
+    private void poda() {
+        this.ci.remove(ci.stream().findAny().filter(p -> p.getProceso() == this.id).get());
     }
 
     /**
-     * Remueve Tuplas de CI del proceso con base
-     * en el historial dado por el mensaje
+     * Remueve Tuplas de CI del proceso con base en el historial dado por el mensaje
+     * 
      * @param historial
      */
-    private void poda(List<Tupla> historial)
-    {
-        for (Tupla tci : this.ci)
-        {
-            for(Tupla his : historial)
-            {
-                if(tci.getProceso() == his.getProceso())
+    private void poda(List<Tupla> historial) {
+        for (Tupla tci : this.ci) {
+            for (Tupla his : historial) {
+                if (tci.getProceso() == his.getProceso())
                     this.ci.remove(tci);
             }
         }
     }
 
     /**
-     * Verifica si existen procesos en espera y 
-     * evalúa si es que pueden ser entregados
+     * Verifica si existen procesos en espera y evalúa si es que pueden ser
+     * entregados
      */
-    private void verificarMensajesEnEspera()
-    {
-        for(Mensaje msg : this.buffer)
-        {
+    private void verificarMensajesEnEspera() {
+        for (Mensaje msg : this.buffer) {
             ordenar(msg);
         }
     }
 
     /**
      * Método principal que permite el ordenamiento
+     * 
      * @param msg
      */
     private void ordenar(Mensaje msg) {
@@ -201,36 +197,55 @@ public class Proceso implements Runnable
         } else {
             delivery(msg);
 
-            if(!this.buffer.isEmpty())
+            if (!this.buffer.isEmpty())
                 verificarMensajesEnEspera();
         }
     }
 
+    public void clearCI() {
+        this.ci.clear();
+    }
+
     /**
      * Enviar un mensaje a un proceso dado
-     * @param msg Mensaje que se envía
+     * 
+     * @param msg          Mensaje que se envía
      * @param destinatario Proceso al que se le envía el mensaje
      */
-    public void enviarMensaje(Mensaje msg, Proceso destinatario)
-    {
+    public void enviarMensaje(Mensaje msg, Proceso destinatario) {
         msg.setHistorial(destinatario.getCI());
+        destinatario.clearCI();
 
-        try 
-        {
+        try {
             UDPCliente.enviarUDP(msg, destinatario);
         } catch (Exception e) {
             System.out.println("Ocurrió un error al intentar enviar el mensaje " + msg.toString());
             System.out.print(e.getMessage() + "\n");
         }
+    }
+
+    public void serve()
+    {
         
     }
 
-    @Override
-    public void run()
-    {
-        // TODO: Poner en un ciclo
-        Mensaje msg = new Mensaje(1,1,""); // Objeto provisional
+    // @Override
+    // public void run()
+    // {
+    //     // // TODO: Poner en un ciclo
+    //     // Mensaje msg = new Mensaje(1,1,""); // Objeto provisional
 
-        ordenar(msg);
+    //     // ordenar(msg);
+
+    //     while(true)
+    //     {
+    //         serve();
+    //     }
+    // }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        // System.out.println(evt.getPropertyName());
+        ordenar(this.udps.getRecibido());
     }
 }

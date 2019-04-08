@@ -37,6 +37,7 @@ public class MBCP {
         Ordenamiento o = new Ordenamiento(procesos);
         Thread ordenamiento = new Thread(o);
         ordenamiento.start();
+        
 
         Scanner lee = new Scanner(System.in);
         try {

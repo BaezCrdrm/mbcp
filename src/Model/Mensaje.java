@@ -15,31 +15,35 @@ import java.util.List;
  */
 public class Mensaje extends Tupla implements Serializable
 {
-    private String cadena;
+    private String datos;
     private List<Tupla> historial;
 
-    public Mensaje(int proceso, int numero, String cadena) {
+    public Mensaje(int proceso, int numero, String datos) {
         super(proceso, numero);
-        initialize(cadena);
+        initialize(datos);
     }
 
-    public Mensaje(Tupla tupla, String cadena) {
+    public Mensaje(Tupla tupla, String datos) {
         super(tupla);
-        initialize(cadena);
+        initialize(datos);
     }
 
-    private void initialize(String cadena)
+    private void initialize(String datos)
     {
-        this.cadena = cadena;
+        this.datos = datos;
         historial = new ArrayList<Tupla>();
     }
 
+    /**
+     * Obtener datos
+     * @return
+     */
     public String getCadena() {
-        return cadena;
+        return datos;
     }
 
-    public void setCadena(String cadena) {
-        this.cadena = cadena;
+    public void setCadena(String datos) {
+        this.datos = datos;
     }
 
     public Tupla getTupla() { return new Tupla(this); }
@@ -58,7 +62,7 @@ public class Mensaje extends Tupla implements Serializable
 
     @Override
     public String toString() {
-        return "Mensaje{" + "numero=" + this.getMensaje() + ", cadena=" + cadena + ", vector=" + this.getProceso() + '}';
+        return "Mensaje{" + "numero=" + this.getMensaje() + ", datos=" + datos + ", vector=" + this.getProceso() + '}';
     }
     
 }

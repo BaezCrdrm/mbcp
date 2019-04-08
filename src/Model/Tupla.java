@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Tupla
+ * @author BaezCrdrm
  */
 public class Tupla implements Serializable{
     private int proceso, mensaje;

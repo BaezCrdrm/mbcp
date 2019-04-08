@@ -58,8 +58,6 @@ public class UDPCliente {
         } catch(SocketException e) { System.out.println("Socket: " + e.getMessage());
         } catch (IOException ex) {
             Logger.getLogger(UDPCliente.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        }   
     }
-    
 }
