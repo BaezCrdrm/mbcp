@@ -1,12 +1,13 @@
 package Model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
  * Tupla
  */
-public class Tupla {
+public class Tupla implements Serializable{
     private int proceso, mensaje;
 
     public Tupla(int proceso, int msg)
