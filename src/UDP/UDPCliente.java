@@ -40,7 +40,7 @@ public class UDPCliente {
             byte[] data = outputstream.toByteArray();
 
             InetAddress aHost= InetAddress.getByName(proceso.getAddress());
-            int serverPort = Integer.parseInt(proceso.getPuerto());
+            int serverPort = proceso.getPuerto();
             // Envío del objecto
             DatagramPacket sendPacket = new DatagramPacket(data, data.length,aHost, serverPort);
             aSocket.send(sendPacket);

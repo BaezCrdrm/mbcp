@@ -31,7 +31,7 @@ public class Pantalla extends javax.swing.JFrame {
     public Pantalla() {
         initComponents();
         txtVector.setText(obtenerVector(d));
-        
+        this.setVisible(true);
     }
     
     /**

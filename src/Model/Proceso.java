@@ -14,8 +14,8 @@ import UDP.UDPServer;
  * @author BaezCrdrm
  */
 public class Proceso implements PropertyChangeListener {
-    private String address, puerto;
-    private int id;
+    private String address;
+    private int id, puerto;
     private List<Mensaje> buffer, recibidos;
     private List<Tupla> ci;
     private int[] vt;
@@ -29,7 +29,7 @@ public class Proceso implements PropertyChangeListener {
      * @param puerto Puerto del equipo que ejecutará el proceso
      * @param id     Identificador del proceso
      */
-    public Proceso(String ip, String puerto, int id) {
+    public Proceso(String ip, int puerto, int id) {
         this.address = ip;
         this.puerto = puerto;
         this.id = id;
@@ -52,14 +52,15 @@ public class Proceso implements PropertyChangeListener {
             this.recibidos = new ArrayList<Mensaje>();
             this.vt = new int[n];
             this.ci = new ArrayList<Tupla>();
-            this.udps = new UDPServer();
+            this.udps = new UDPServer(this.puerto);
             this.udps.addPropertyChangeListener(this);
-            this.server = new Thread(this.udps);
-            this.server.start();
+            serve();
         } catch (NullPointerException npe) {
             System.out.println("Ocurró un error al crear el proceso");
             System.out.println("Agrega los valores correctos al parámetro");
-            throw new NullPointerException();
+            System.out.println(npe.getMessage());
+            npe.printStackTrace();
+            // throw new NullPointerException();
         }
     }
 
@@ -73,7 +74,7 @@ public class Proceso implements PropertyChangeListener {
     /**
      * @return the puerto
      */
-    public String getPuerto() {
+    public int getPuerto() {
         return puerto;
     }
 
@@ -93,7 +94,7 @@ public class Proceso implements PropertyChangeListener {
     }
 
     public boolean esIniciable() {
-        if (!((this.address == null || this.address.equals("")) && (this.puerto == null || this.puerto.equals(""))))
+        if (!((this.address == null || this.address.equals(""))))
             return true;
         else
             return false;
@@ -226,26 +227,25 @@ public class Proceso implements PropertyChangeListener {
 
     public void serve()
     {
-        
+        this.server = new Thread(this.udps);
+        this.server.start();
     }
 
-    // @Override
-    // public void run()
-    // {
-    //     // // TODO: Poner en un ciclo
-    //     // Mensaje msg = new Mensaje(1,1,""); // Objeto provisional
-
-    //     // ordenar(msg);
-
-    //     while(true)
-    //     {
-    //         serve();
-    //     }
-    // }
-
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
+    public void propertyChange(PropertyChangeEvent evt)
+    {
         // System.out.println(evt.getPropertyName());
         ordenar(this.udps.getRecibido());
+    }
+
+    public static String getMachineIp() {
+        String ip = "";
+        try (final java.net.DatagramSocket socket = new java.net.DatagramSocket()) {
+            socket.connect(java.net.InetAddress.getByName("8.8.8.8"), 10002);
+            ip = socket.getLocalAddress().getHostAddress();
+        } catch (Exception ex) {
+        }
+
+        return ip;
     }
 }

@@ -26,11 +26,12 @@ import Model.Mensaje;
 public class UDPServer implements Runnable
 {
     private Mensaje recibido;
+    private int puerto;
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
-    public UDPServer()
+    public UDPServer(int puerto)
     {
-
+        this.puerto = puerto;
     }
 
     public Mensaje getRecibido() { return this.recibido; }
@@ -49,10 +50,9 @@ public class UDPServer implements Runnable
     @Override
     public void run()
     {
-        int vectorProceso =0;
         try{
             // se crea el datagrama para recibir el mensaje
-            DatagramSocket aSocket = new DatagramSocket(6789);
+            DatagramSocket aSocket = new DatagramSocket(puerto);
             //vector del objeto entrante
             byte [] incoming = new byte[1024];
             while(true)
@@ -80,9 +80,10 @@ public class UDPServer implements Runnable
                     
                     System.out.println(mensaje.toString());
 
-                    this.recibido = mensaje;
+                    Mensaje temp = this.recibido;
+                    recibido = mensaje;
                     // No modificar
-                    changes.firePropertyChange("CambiaMensaje", null, this.recibido);
+                    changes.firePropertyChange("recibido", temp, recibido);
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(UDPServer.class.getName()).log(Level.SEVERE, null, ex);
                 }

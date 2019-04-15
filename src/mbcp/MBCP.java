@@ -25,8 +25,8 @@ public class MBCP {
 
     public static void main(String[] args) {
         procesos = new ArrayList<Proceso>();
-        procesos.add(new Proceso("192.168.100.5", "101", 0));
-        procesos.add(new Proceso("192.168.100.5", "102", 1));
+        procesos.add(new Proceso(Proceso.getMachineIp(), 101, 0));
+        procesos.add(new Proceso(Proceso.getMachineIp(), 102, 1));
 
         // while(true)
         // {

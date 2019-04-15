@@ -28,6 +28,9 @@ public class Ordenamiento implements Runnable {
                 this.procesos.add(new Proceso(proceso, procs.size()));
             }
         }
+
+        this.procesos.get(0).enviarMensaje(new Mensaje(1, 1, "Hola 1"), this.procesos.get(1));
+        this.procesos.get(1).enviarMensaje(new Mensaje(2, 1, "Hola 2"), this.procesos.get(0));
     }
 
     public List<Mensaje> getOrden(int proceso)
