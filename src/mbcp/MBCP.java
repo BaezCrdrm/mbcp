@@ -50,11 +50,16 @@ public class MBCP {
         {
             System.out.println("1. Ingresa ID proceso");
             int n = lee.nextInt();
-            List<Mensaje> msgs = o.getOrden(n);
+
+            try {
+                List<Mensaje> msgs = o.getOrden(n);
             
-            for(Mensaje m : msgs)
-            {
-                System.out.println(m.toString());
+                for(Mensaje m : msgs)
+                {
+                    System.out.println(m.toString());
+                }
+            } catch (Exception e) {
+                
             }
         }
     }

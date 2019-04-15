@@ -35,7 +35,14 @@ public class Ordenamiento implements Runnable {
 
     public List<Mensaje> getOrden(int proceso)
     {
-        return this.procesos.get(proceso).getOrden();
+        try
+        {
+            return this.procesos.get(proceso).getOrden();
+        }
+        catch(NullPointerException npe) {
+            System.out.println("Proceso " + proceso + " no válido");
+        }
+        return null;
     }
 
     @Override
